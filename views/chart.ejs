@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Quantified Trade</title>
+  <% include ./partials/headcommon %>
+
+
+<script>
+$(function () {
+    $.getJSON('http://quantifiedtrade.com/chart?symbol=msft', function (data) {
+
+        // create the chart
+        $('#chartcontainer').highcharts('StockChart', {
+
+
+            title: {
+                text: 'AAPL stock price by minute'
+            },
+
+            rangeSelector : {
+                buttons : [{
+                    type : 'hour',
+                    count : 1,
+                    text : '1h'
+                }, {
+                    type : 'day',
+                    count : 1,
+                    text : '1D'
+                }, {
+                    type : 'all',
+                    count : 1,
+                    text : 'All'
+                }],
+                selected : 1,
+                inputEnabled : false
+            },
+
+            series : [{
+                name : 'AAPL',
+                type: 'candlestick',
+                data : data.candledata,
+                tooltip: {
+                    valueDecimals: 2
+                }
+            }]
+        });
+    });
+});
+</script>
+</head>
+
+<body>
+
+<div id="chartcontainer" style="height: 300px"></div>
+  
+  
+<% include ./partials/commonjs %>
+			<script src="components/highcharts/highstock.js"></script>  
+  
+  </body>
+  
+</html>

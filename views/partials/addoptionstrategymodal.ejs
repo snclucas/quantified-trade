@@ -1,0 +1,28 @@
+<div id="myModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Create new option strategy for <%= symbol %></h4>
+      </div>
+      <div class="modal-body">
+        <form role="form" action="/strategy/add" method="post">
+          <div class="form-group">
+            <label for="email">Name:</label>
+            <input type="text" class="form-control" id="strategyname" name="strategyname">
+          </div>
+          <div class="form-group">
+            <label for="pwd">Description:</label>
+            <input type="text" placeholder="optional" class="form-control" id="strategydescription" name="strategydescription">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+          <input type="hidden" name="symbol" id="symbol" value="<%= symbol %>">
+          <input type="hidden" name="expiry" id="expiry" value="<%= expiry %>">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

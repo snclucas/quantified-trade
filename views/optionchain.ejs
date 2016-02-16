@@ -1,0 +1,239 @@
+<!doctype html>
+
+<head>
+	<title>Quantified Trade | Option chain |
+		<%= symbol %> |
+			<%= expiry %>
+	</title>
+	<% include ./partials/headcommon %>
+
+		<link rel="stylesheet" type="text/css" href="./css/optionchains.css" />
+		<link rel="stylesheet" type="text/css" href="./css/indicators.css" />
+		<link href="css/spinner.css" rel="stylesheet">
+
+		<style>
+			body {
+				padding-top: 30px;
+				background-color: #475059;
+			}
+		</style>
+</head>
+
+<body onload="initScreen();getUserStrategies();">
+	<script>
+		var QTAPP = {
+			symbol: '<%= symbol %>',
+			riskFreeRate: 0.0036,
+			options: JSON.parse('<%- options_js %>'),
+			strategyID: '<%= strategyid %>',
+			currentPrice: '<%= quote.last %>'
+		};
+	</script>
+
+
+	<div class="container" style="padding-top: 30px;background-color:#fff;">
+		
+		
+
+		<div class="row" style="padding-left: 30px;padding-right: 30px;padding-bottom: 30px;">
+			
+			<p><a href="/dashboard"><span style= "font-size: 3em;" class="glyphicon glyphicon-arrow-left"></span></a></p>
+			
+			<div class="col-md-5">
+				<div class="pull-left">
+					<H3>
+						<%= quote.description %> <small><%= quote.symbol %> <br> Bid: <%= quote.bid %> | Ask: <%= quote.ask %>| Last: <%= quote.last %></small>
+            </H3>
+				</div>
+				<div class="pull-right">
+					<H3><small><%= daysToExpiry %> day(s) to expiry.</small></H3>
+					<div class="dropdown pull-right">
+						<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<%= expiry %>
+								<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="dropDownExpirations">
+						</ul>
+					</div>
+				</div>
+
+
+
+			</div>
+			<div class="col-md-3">
+
+				<div class="dropdown pull-right">
+					<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<%= listtype %>
+							<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="dropDownOptionTypes">
+						<li><a href="\optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&listtype=single">Single</a></li>
+						<li><a href="\optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&listtype=spread">Spread</a></li>
+						<li><a href="\optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&listtype=straddle">Straddle</a></li>
+						<li><a href="\optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&listtype=strangle">Strangle</a></li>
+					</ul>
+				</div>
+
+			</div>
+			<div class="col-md-2">
+				<!-- Button HTML (to Trigger Modal) -->
+				<a href="#myModal" role="button" class="btn btn-large btn-primary" data-toggle="modal">Create new strategy</a>
+				<% include ./partials/addoptionstrategymodal %>
+			</div>
+			<div class="col-md-2">
+				<select id="dropDownUserStrategies" class="form-control">
+				</select>
+			</div>
+		</div>
+
+		<div class="row" style="padding-left: 30px;padding-right: 30px;padding-bottom: 30px;">
+
+			<div class="col-md-6">
+
+				<div id="option-table">
+					<table class="col-md-12 table-bordered table-condensed cf">
+						<thead class="cf">
+							<tr>
+								<th colspan="4" class="numeric text-center">Calls</th>
+								<th colspan="3" class="numeric text-center"></th>
+								<th colspan="4" class="numeric text-center">Puts</th>
+							</tr>
+						</thead>
+						<thead class="cf">
+							<tr>
+								<th class="numeric text-center"></th>
+								<th class="numeric text-center">Bid</th>
+								<th class="numeric text-center">Ask</th>
+								<th class="numeric text-center">Op. In.</th>
+								<th colspan="3" class="numeric text-center">Strike</th>
+								<th class="numeric text-center">Bid</th>
+								<th class="numeric text-center">Ask</th>
+								<th class="numeric text-center">Op. In.</th>
+								<th class="numeric text-center"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<% if(options.calls.length > 0) { %>
+								<% for(var i=0; i < options.calls.length; i++) { %>
+									<tr>
+										<td style="cursor: pointer;" class="addoption" data-optionindex="<%= i %>" data-optiontype="call" data-optionstrike="<%= options.calls[i].strike %>" data-optionbid="<%= options.calls[i].bid %>" data-optionask="<%= options.calls[i].ask %>"><span class="fa fa-plus fa-lg text-info"></span></td>
+
+										<td data-title="Code" class="numeric text-center" data-href='optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&viewoption=<%= i %>&type=call' style="cursor: pointer; ">
+											<% if(options.calls[i].bid != null) { %>
+												<%= options.calls[i].bid.toPrecision(3) %>
+													<% } %>
+										</td>
+										<td data-title="Code" class="numeric text-center" data-href='optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&viewoption=<%= i %>&type=call' style="cursor: pointer; ">
+											<% if(options.calls[i].ask != null) { %>
+												<%= options.calls[i].ask.toPrecision(3) %>
+													<% } %>
+										</td>
+										<td data-title="Code" class="numeric text-center clickable-row" data-href='optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&viewoption=<%= i %>&type=call' style="cursor: pointer; ">
+											<%= options.calls[i].open_interest %>
+										</td>
+										<td id="callside-<%=  options.calls[i].strike %>" data-title="Code" class="numeric text-center clickable-row" data-href='optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&viewoption=<%= i %>&type=call' style="cursor: pointer; ">
+											<%  if(quote.last > options.calls[i].strike)  { %> ITM <% } %>
+										</td>
+										<td data-title="Change" class="numeric text-center">
+											<%= options.calls[i].strike %>
+										</td>
+										<td id="putside-<%=  options.puts[i].strike %>" class="numeric text-center clickable-row" data-href='optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&viewoption=<%= i %>&type=put' style="cursor: pointer; ">
+											<%  if(quote.last < options.puts[i].strike)  { %> ITM <% } %>
+										</td>
+										<td data-title="Change %" class="numeric text-center" data-href='optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&viewoption=<%= i %>&type=put' style="cursor: pointer; ">
+											<% if(options.puts[i].bid != null) { %>
+												<%= options.puts[i].bid.toPrecision(3) %>
+													<% } %>
+										</td>
+										<td data-title="Change %" class="numeric text-center" data-href='optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&viewoption=<%= i %>&type=put' style="cursor: pointer; ">
+											<% if(options.puts[i].ask != null) { %>
+												<%= options.puts[i].ask.toPrecision(3) %>
+													<% } %>
+										</td>
+										<td data-title="High" class="numeric text-center" data-href='optionchain?symbol=<%= symbol %>&expiry=<%= expiry %>&viewoption=<%= i %>&type=put' style="cursor: pointer; ">
+											<%= options.puts[i].open_interest %>
+										</td>
+										<td style="cursor: pointer;" class="addoption" data-optionindex="<%= i %>" data-optiontype="put" data-optionstrike="<%= options.puts[i].strike %>" data-optionbid="<%= options.puts[i].bid %>" data-optionask="<%= options.puts[i].ask %>"><span class="fa fa-plus fa-lg text-danger"></span></td>
+									</tr>
+									<% } %>
+										<% } else { %>
+											<tr>
+												<td colspan="9"> No option chain found </td>
+											</tr>
+											<% } %>
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+			<!-- end of column with table -->
+
+			<div class="col-md-6">
+				<% include ./partials/optionstrategy %>
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<h4>Information on the underlying equity</h4>
+
+				<div class="tabbable-panel">
+					<div class="tabbable-line">
+						<ul class="nav nav-tabs ">
+							<li class="active">
+								<a href="#tab_default_1" data-toggle="tab">
+							Technical indicators </a>
+							</li>
+							<li>
+								<a href="#tab_default_2" data-toggle="tab">
+							Momentum indicators </a>
+							</li>
+							<li>
+								<a href="#tab_default_3" data-toggle="tab">
+							Sentiment </a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active" id="tab_default_1">
+								<% include ./partials/techindicators %>
+							</div>
+							<div class="tab-pane" id="tab_default_2">
+								<% include ./partials/momindicators %>
+							</div>
+							<div class="tab-pane" id="tab_default_3">
+								<p>
+									Howdy, I'm in Tab 3.
+								</p>
+								<p>
+									Duis autem vel eum iriure dolor in hendrerit in vulputate. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit
+									esse molestie consequat
+								</p>
+								<p>
+									<a class="btn btn-info" href="http://j.mp/metronictheme" target="_blank">
+									Learn more...
+								</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<br>
+
+	<% include ./partials/footer %>
+
+		<% include ./partials/commonjs %>
+			<script src="components/highcharts/highstock.js"></script>
+			<script src="js/optionlib.js"></script>
+			<script src="js/optionstrategypanels.js"></script>
+			<script src="js/optionchain.js"></script>
+
+</body>
+
+</html>

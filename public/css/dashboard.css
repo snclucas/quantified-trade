@@ -1,0 +1,38 @@
+.stratregy-list {
+  margin: 5px 5px; /* Making sure to keep some distance from all side */
+}
+
+.strategydesc {
+  width: 100%; /* Configure it fit in your design  */
+  margin: 0 auto; /* Centering Stuff */
+  background-color: #FFFFFF; /* Default background */
+  padding: 20px;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
+  margin: 0 auto;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+}
+
+.OTM {
+  border-left-color: #d9534f; /* Left side border color */
+  background-color: rgba(217, 83, 79, 0.1); /* Same color as the left border with reduced alpha to 0.1 */
+}
+
+.OTM strong {
+  color:  #d9534f;
+}
+
+.ITM {
+  border-left-color: #2b542c;
+  background-color: rgba(43, 84, 44, 0.1);
+}
+
+.ITM strong {
+  color: #2b542c;
+}
+
+.strategydesc a {
+    text-decoration: none;
+}

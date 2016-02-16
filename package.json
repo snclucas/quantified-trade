@@ -1,0 +1,35 @@
+{
+  "name": "QuantifiedTrade",
+  "main": "server.js",
+  "dependencies": {
+    "bcrypt-nodejs": "latest",
+    "bluebird": "^3.1.1",
+    "body-parser": "1.0.2",
+    "connect": "3.4.1",
+    "connect-flash": "~0.1.1",
+    "connect-mongodb": "1.1.5",
+    "cookie-parser": "1.0.1",
+    "ejs": "0.8.8",
+    "express": "^4.1.0",
+    "express-session": "1.0.4",
+    "method-override": "~1.0.0",
+    "mongoose": "^3.8.8",
+    "morgan": "~1.0.0",
+    "nodemailer": "2.1.0",
+    "nodemailer-smtp-transport": "2.0.1",
+    "option-payoff": "2.0.2",
+    "passport": "0.1.18",
+    "passport-facebook": "1.0.3",
+    "passport-google-oauth": "0.1.5",
+    "passport-local": "0.1.6",
+    "passport-twitter": "~1.0.2",
+    "request": "^2.67.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test"
+  },
+  "devDependencies": {
+    "mocha": "2.4.5",
+    "supertest": "1.2.0"
+  }
+}

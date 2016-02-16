@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Quantified Trade</title>
+  <% include ./partials/headcommon %>
+    <style>
+      body {
+        padding-top: 30px;
+        background-color: #475059;
+      }
+    </style>
+
+    <meta name="description" content="New way to quantify your trades!">
+    <meta name="keywords" content="stock, options, trading, charting">
+    <meta name="author" content="Quantified Trade">
+
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="text-center">
+      <img src="./img/stock-market-xs.jpg" alt="Stock market" height="300" width="300">
+    </div>
+    <div class="text-center">
+      <img src="./img/logo.png" alt="Logo">
+    </div>
+    <% if(!isLoggedIn) { %>
+      <div class="text-center">
+        <a href="/login"><span style= "font-size: 3em;" class="glyphicon glyphicon-log-in"></span></a>
+        <!--  <a href="/signup" class="btn btn-default">Local Signup</a>
+        <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
+        <a href="/auth/twitter" class="btn btn-info"><span class="fa fa-twitter"></span> Twitter</a>
+        <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google+</a>
+      -->
+      </div>
+      <% } %>
+        <br>
+
+        <% include ./partials/footerfrontpage %>
+
+  </div>
+</body>
+
+</html>

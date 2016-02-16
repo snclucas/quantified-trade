@@ -1,0 +1,95 @@
+
+
+<style>
+  .table tbody>tr>td.vert-align {
+    vertical-align: middle;
+  }
+  
+  th,
+  td {
+    padding: 5px;
+  }
+  
+  .table tbody>tr {
+    line-height: 25px;
+  }
+  
+  .panel-heading span {
+    margin-top: -20px;
+    font-size: 15px;
+  }
+  * {
+  border-radius: 0 !important;
+}
+</style>
+
+<div id="optionstrategy" style = "display: none">
+
+  <div class="row">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 id="strategy-name-button" class="panel-title  has-spinner">
+          <span class="spinner"><i class="fa fa-refresh fa-spin"></i></span> Strategy: <span id="strategy-name"></span></h3>
+        <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+        
+      </div>
+      <div class="panel-body">
+        <p><span id="strategy-desc"></span></p>
+      <div id="payoffchartcontainer" style="height: 300px"></div>
+
+        
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <th colspan="2" class="text-center">Price breakevens</th>
+            </thead>
+            <thead>
+              <th class="text-center">Price</th>
+              <th class="text-center">Probability</th>
+            </thead>
+            <tbody id="breakevenstable">
+            </tbody>
+          </table>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="row">
+
+
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Strategy options</h3>
+        <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+      </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table id="strategyoptionstable" class="table table-bordered table-striped">
+            <thead>
+              <th class="text-center">Type</th>
+              <th class="text-center">Strike</th>
+              <th class="text-center">Expiry</th>
+              <th class="text-center">Premium</th>
+              <th class="text-center">Buy/Sell</th>
+              <th class="text-center">Delete</th>
+            </thead>
+            <tbody id="optionstrategytable"></tbody>
+          </table>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+</div>
+
+<div id="nooptionstrategy" style = "display: none">
+  <p> No options defined for this strategy. To add an option use the 
+    <i class="fa fa-plus fa-lg text-info"></i> or <i class="fa fa-plus fa-lg text-danger"></i> buttons in the option chain table.</p>
+</div>
