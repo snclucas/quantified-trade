@@ -2,12 +2,21 @@
 <html>
 
 <head>
-  <title>Quantified Trade</title>
-  <% include ./partials/headcommon %>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script src="components/highcharts/highstock.js"></script>  
+	<title>Quantified Trade | Symbol:
+		<%= quoteData.quote.symbol %>
+	</title>
+	<% include ./partials/headcommon %>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="../components/highcharts/highstock.js"></script> 
+		<style>
+			body {
+				padding-top: 30px;
+				background-color: #475059;
+			}
+		</style>
 	
-<script>
+	
+	<script>
 $(function () {
     $.getJSON('http://quantifiedtrade.com/chart?symbol=msft', function (data) {
 
@@ -100,16 +109,22 @@ $(function () {
 </head>
 
 <body>
-
-	 	<div class="container" style="padding-top: 30px;background-color:#fff;">
+	
+		<div class="container" style="padding-top: 30px;background-color:#fff;">
 		<div class="row" style="padding-left: 30px;padding-right: 30px;padding-bottom: 30px;">
+			<div>
+				<%= quoteData.quote.description %> / <%= quoteData.quote.symbol %>
+			</div>
 <div id="chartcontainer" style="height: 300px"></div>
 	</div>
 	</div>
-  
-<% include ./partials/commonjs %>
-			
-  
-  </body>
-  
+
+
+
+
+	<% include ./partials/commonjs %>
+		 
+
+</body>
+
 </html>

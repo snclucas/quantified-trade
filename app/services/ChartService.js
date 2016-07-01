@@ -30,6 +30,9 @@ exports.getHistoricalData = function(req, res) {
   if(typeof req.query.symbol === 'undefined') {
     
   }
+  
+  var output = req.query.output;
+  output = (typeof req.query.output === 'undefined') ? "web" : output;
 
   var interval = req.query.interval;
   interval = (typeof req.query.interval === 'undefined') ? "daily" : interval;
@@ -58,10 +61,15 @@ exports.getHistoricalData = function(req, res) {
     
     if (!error && response.statusCode == 200) {
       var historicalData = JSON.parse(body);
-      res.render('chart', {
-        symbol: symbol,
-        candledata: formatData(historicalData.history.day)
-      });
+      if (output == 'json')
+        res.json(historicalData);
+      else {
+        
+        console.log(formatData(historicalData.history.day));
+        
+        res.json(formatData(historicalData.history.day)
+        );
+    }
     } else {
       console.log(error);
     }

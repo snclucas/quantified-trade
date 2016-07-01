@@ -59,11 +59,13 @@ exports.getOptionChainData = function(req, res) {
   request(optionso, function(error, response, body) {
     var status = null;
     var optionChainData = null;
+    
+    console.log("error = " + error);
+    console.log("response.statusCode = " + response.statusCode);
 
     if (!error && response.statusCode == 200)
       optionChainData = JSON.parse(body);
-
-    if (optionChainData.options === null)
+    else
       optionChainData = {
         calls: [],
         puts: []

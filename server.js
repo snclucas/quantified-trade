@@ -49,6 +49,7 @@ require('./app/routes/routes.js')(app);
 require('./app/routes/loginroutes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 require('./app/routes/optionsroutes.js')(app);
 require('./app/routes/chartroutes.js')(app);
+require('./app/routes/symbolroutes.js')(app);
 
 // launch ======================================================================
 app.listen(port);
