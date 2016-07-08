@@ -386,7 +386,7 @@ function createChart(strategy, payoff, priceRange, currentPrice, payoffAtCurrent
 
 $(function() {
 	$.get('/optionexpirations/' + QTAPP.symbol, function(data) {
-		$.each(data.expirations.date, function(key, value) {
+		$.each(data.data.expirations.date, function(key, value) {
 			var newEntry = '<li><a href="\optionchain?symbol=' + QTAPP.symbol + '&expiry=' + value + '">' + value + '</li>';
 			$("#dropDownExpirations").append(newEntry);
 		});

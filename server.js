@@ -16,6 +16,8 @@ var session      = require('express-session');
 
 var configDB = require('./config/database.js');
 
+var MongoStore = require('connect-mongo/es5')(session);
+
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
@@ -38,7 +40,22 @@ app.use(express.static(__dirname + '/public'));
 //app.use("/public", express.static(__dirname + '/public'));
 
 // required for passport
-app.use(session({ secret: process.env.SESSION_SECRET })); // session secret
+//app.use(session({ secret: process.env.SESSION_SECRET })); // session secret
+
+app.use(session({
+  secret: 'ilovescotchscotchyscotchscotch' ,
+  cookie : {
+    maxAge: 3600000, // see below
+    rolling: true,
+    resave: true, 
+  },
+  rolling: true,
+    store   : new MongoStore({
+        url  : configDB.url
+    })
+}));
+
+
 app.use(passport.initialize());
 
 app.use(passport.session()); // persistent login sessions

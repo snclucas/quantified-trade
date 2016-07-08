@@ -5,16 +5,20 @@ exports.getAllOptionStrategiesForUser = function(req, res) {
   var user = req.user;
   var symbol = req.query.symbol;
   symbol = (typeof req.query.symbol === 'undefined') ? "" : symbol;
-  
+
   var grouped = req.query.grouped;
   grouped = (typeof req.query.grouped === 'undefined') ? false : grouped;
-  
+
   var criteria = {};
-  if(symbol === "") {
-    criteria = {'user': user,};
-  }
-  else {
-    criteria = {'user': user, 'symbol': symbol};
+  if (symbol === "") {
+    criteria = {
+      'user': user,
+    };
+  } else {
+    criteria = {
+      'user': user,
+      'symbol': symbol
+    };
   }
 
   OptionStrategy.find(criteria, function(err, strategies) {
@@ -28,9 +32,9 @@ exports.getAllOptionStrategiesForUser = function(req, res) {
       });
     } else {
       var returnStrategies = strategies;
-      if(grouped)
+      if (grouped)
         returnStrategies = groupStrategiesBySymbol(strategies);
-        
+
       res.json({
         status: 1,
         strategies: returnStrategies
@@ -108,6 +112,30 @@ exports.deleteOptionFromStrategy = function(req, res) {
 }
 
 
+exports.deleteStrategy = function(req, res) {
+  var strategy_id = req.params.strategyid;
+
+  if (strategy_id === "")
+    res.json({
+      staus: -1,
+      message: "Could not find option strategy with ID " + strategy_id
+    });
+  
+  
+
+  OptionStrategy.find({
+    _id: strategy_id
+  }).remove(function(err, strategy_id) {
+    if (err) {
+      res.send(err);
+    }
+    
+    console.log('dddd');
+
+  })
+}
+
+
 
 exports.deleteAllOptionsFromStrategy = function(req, res) {
   var id = req.params.strategyid;
@@ -126,8 +154,7 @@ exports.deleteAllOptionsFromStrategy = function(req, res) {
     }
     // console.log(optionStrategy);
     // handle errors ..
-    optionStrategy.strategyoptions.pull({
-    });
+    optionStrategy.strategyoptions.pull({});
 
     optionStrategy.save(function(err, optionStrategy) {
       if (err) {

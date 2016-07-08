@@ -8,11 +8,12 @@
 		<link rel="stylesheet" type="text/css" href="./css/about.css" />
 		<link rel="stylesheet" type="text/css" href="css/dashboardsearchwidget.css">
 		<link rel="stylesheet" type="text/css" href="css/search.css">
-	<link rel="stylesheet" type="text/css" href="components/Selectivity.js/dist/selectivity-full.css">
+		<link rel="stylesheet" type="text/css" href="components/Selectivity.js/dist/selectivity-full.css">
 		<style>
 			body {
 				background-color: #475059;
 			}
+			
 			.input-mysize {
 				width: 150px
 			}
@@ -25,75 +26,52 @@
 		<!--
 		<% //include ./partials/navbar %>
 		-->
-			<div class="row" style="padding-bottom: 30px;padding-top: 30px;">
-				<div class="col-sm-12">
+		<div class="row" style="padding-bottom: 30px;padding-top: 30px;">
+			<div class="col-sm-12">
 
-					<div id="example-6" class="selectivity-input example-input" tabindex="0">
-						<div class="selectivity-single-select">
-							<input type="text" class="selectivity-single-select-input">
-							<div class="selectivity-single-result-container">
-								<div class="selectivity-placeholder">Search for a repository</div>
+				<div id="example-6" class="selectivity-input example-input" tabindex="0">
+					<div class="selectivity-single-select">
+						<input type="text" class="selectivity-single-select-input">
+						<div class="selectivity-single-result-container">
+							<div class="selectivity-placeholder">Search for a repository</div>
+						</div>
+						<i class="fa fa-sort-desc selectivity-caret"></i>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="row" style="padding-bottom: 30px;">
+			<div class="col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="glyphicon glyphicon-list"></span>Option strategies
+						<div class="pull-right action-buttons">
+							<div class="btn-group pull-right">
+								<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="modal" data-target="#myModal">
+									<span class="glyphicon glyphicon-plus" style="margin-right: 0px;"></span>
+								</button>
 							</div>
-							<i class="fa fa-sort-desc selectivity-caret"></i>
 						</div>
 					</div>
-
+					<div class="panel-body">
+						<ul id="stratlist" class="list-group">
+						</ul>
+					</div>
 				</div>
 			</div>
-
-			<div class="row" style="padding-bottom: 30px;">
-				<div class="col-md-6">
-					<!-- BEGIN Portlet PORTLET-->
-					<div class="portlet">
-						<div class="portlet-title">
-							<div class="caption caption-red">
-								<i class="glyphicon glyphicon-list-alt"></i>
-								<span class="caption-subject bold font-yellow-crusta uppercase">
-							Stock strategies </span>
-								<!-- <span class="caption-helper">more samples...</span> -->
-							</div>
-						</div>
-						<div class="portlet-body" style="height:300px; overflow-y:auto;">
-							<div class="stratregy-list1">
-								<table id="strategylisttable1">
-									<tbody>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					<!-- END Portlet PORTLET-->
-				</div>
-
-				<div class="col-md-6">
-					<!-- BEGIN Portlet PORTLET-->
-					<div class="portlet">
-						<div class="portlet-title">
-							<div class="caption caption-red">
-								<i class="glyphicon glyphicon-list-alt"></i>
-								<span class="caption-subject bold font-yellow-crusta uppercase">
-							Option strategies </span>
-								<!-- <span class="caption-helper">more samples...</span> -->
-							</div>
-						</div>
-						<div class="portlet-body" style="height:300px; overflow-y:auto;">
-							<div class="stratregy-list">
-								<table id="strategylisttable">
-									<tbody>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					<!-- END Portlet PORTLET-->
-				</div>
+			<div class="col-md-6">
 			</div>
+		</div>
 	</div>
 
-	<% include ./partials/commonjs %>
-		<script src="components/Selectivity.js/dist/selectivity-full.js"></script>
-		<script src="js/search.js"></script>
-		<script src="js/dashboard.js"></script>
+	<% include ./partials/addoptionstrategymodalfull %>
+
+		<% include ./partials/commonjs %>
+			<script src="components/Selectivity.js/dist/selectivity-full.js"></script>
+			<script src="js/search.js"></script>
+			<script src="js/dashboard.js"></script>
 
 </body>
 

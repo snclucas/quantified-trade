@@ -19,6 +19,7 @@ module.exports = function(app) {
   });
 
   app.post('/strategy/add', isLoggedIn, strategyService.addOptionStrategy);
+  app.post('/strategy/delete/:strategyid', isLoggedIn, strategyService.deleteStrategy);
   app.post('/strategy/add/option/:strategyid', isLoggedIn, strategyService.addOptionToStrategy);
   app.post('/strategy/:strategyid/option/:optionid/setbuysell/:buysell', isLoggedIn, strategyService.setSideOfStrategyOption);
 

@@ -15,11 +15,16 @@ exports.getOptionExpiriesForSymbol = function(req, res) {
   function callback(error, response, body) {
     if (!error && response.statusCode == 200) {
       var optionChainData = JSON.parse(body);
-      res.json(optionChainData);
+      res.json(
+        {
+          status: 1,
+          data: optionChainData
+        }
+      );
     } else {
       res.json({
-        expirations: null,
-        error: error
+        status: -1,
+        data: null
       });
     }
   }
@@ -96,7 +101,7 @@ exports.getOptionChainData = function(req, res) {
         optionChainData = processOptionChain(rawOptionChainData.options.option);
         daysToExpiry = daysBetween(new Date(), new Date(expiry));
       }
-
+     
       var returnData = {
         status: 1,
         symbol: symbol,
