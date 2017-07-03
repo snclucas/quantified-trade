@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v4.2.1 (2015-12-21)
+ * @license Highcharts JS v4.2.5 (2016-05-06)
  * Client side exporting module
  *
  * (c) 2015 Torstein Honsi / Oystein Moseng
@@ -57,53 +57,73 @@
 			l,
 			fallbackToExportServer = function () {
 				if (options.fallbackToExportServer === false) {
-					throw 'Fallback to export server disabled';
+					if (options.error) {
+						options.error();
+					} else {
+						throw 'Fallback to export server disabled';
+					}
+				} else {
+					chart.exportChart(options);
 				}
-				chart.exportChart(options);
 			},
 			// Get data:URL from image URL
 			// Pass in callbacks to handle results. finallyCallback is always called at the end of the process. Supplying this callback is optional.
-			// All callbacks receive two arguments: imageURL, and callbackArgs. callbackArgs is used only by callbacks and can contain whatever.
-			imageToDataUrl = function (imageURL, callbackArgs, successCallback, taintedCallback, noCanvasSupportCallback, failedLoadCallback, finallyCallback) {
-				var img = new win.Image();
-				if (!webKit) {
-					img.crossOrigin = 'Anonymous'; // For some reason Safari chokes on this attribute
-				}
-				img.onload = function () {
-					var canvas = doc.createElement('canvas'),
-						ctx = canvas.getContext && canvas.getContext('2d'),
-						dataURL;
-
-					if (!ctx) {
-						noCanvasSupportCallback(imageURL, callbackArgs);
-					} else {
-						canvas.height = img.height * scale;
-						canvas.width = img.width * scale;
-						ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-						// Now we try to get the contents of the canvas.
+			// All callbacks receive three arguments: imageURL, imageType, and callbackArgs. callbackArgs is used only by callbacks and can contain whatever.
+			imageToDataUrl = function (imageURL, imageType, callbackArgs, successCallback, taintedCallback, noCanvasSupportCallback, failedLoadCallback, finallyCallback) {
+				var img = new win.Image(),
+					taintedHandler,
+					loadHandler = function () {
+						var canvas = doc.createElement('canvas'),
+							ctx = canvas.getContext && canvas.getContext('2d'),
+							dataURL;
 						try {
-							dataURL = canvas.toDataURL();
-							successCallback(dataURL, callbackArgs);
-						} catch (e) {
-							// Failed - either tainted canvas or something else went horribly wrong
-							if (e.name === 'SecurityError' || e.name === 'SECURITY_ERR' || e.message === 'SecurityError') {
-								taintedCallback(imageURL, callbackArgs);
+							if (!ctx) {
+								noCanvasSupportCallback(imageURL, imageType, callbackArgs);
 							} else {
-								throw e;
+								canvas.height = img.height * scale;
+								canvas.width = img.width * scale;
+								ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+								// Now we try to get the contents of the canvas.
+								try {
+									dataURL = canvas.toDataURL(imageType);
+									successCallback(dataURL, imageType, callbackArgs);
+								} catch (e) {
+									// Failed - either tainted canvas or something else went horribly wrong
+									if (e.name === 'SecurityError' || e.name === 'SECURITY_ERR' || e.message === 'SecurityError') {
+										taintedHandler(imageURL, imageType, callbackArgs);
+									} else {
+										throw e;
+									}
+								}
+							}
+						} finally {
+							if (finallyCallback) {
+								finallyCallback(imageURL, imageType, callbackArgs);
 							}
 						}
-					}
-					if (finallyCallback) {
-						finallyCallback(imageURL, callbackArgs);
-					}
+					},
+					// Image load failed (e.g. invalid URL)
+					errorHandler = function () {
+						failedLoadCallback(imageURL, imageType, callbackArgs);
+						if (finallyCallback) {
+							finallyCallback(imageURL, imageType, callbackArgs);
+						}
+					};
+				
+				// This is called on load if the image drawing to canvas failed with a security error.
+				// We retry the drawing with crossOrigin set to Anonymous.
+				taintedHandler = function () {
+					img = new win.Image();
+					taintedHandler = taintedCallback;
+					img.crossOrigin = 'Anonymous'; // Must be set prior to loading image source
+					img.onload = loadHandler;
+					img.onerror = errorHandler;
+					img.src = imageURL;
 				};
-				img.onerror = function () {
-					failedLoadCallback(imageURL, callbackArgs);
-					if (finallyCallback) {
-						finallyCallback(imageURL, callbackArgs);
-					}
-				};
+
+				img.onload = loadHandler;
+				img.onerror = errorHandler;
 				img.src = imageURL;
 			},
 			// Get blob URL from SVG code. Falls back to normal data URI.
@@ -144,7 +164,7 @@
 					try {
 						windowRef = win.open(dataURL, 'chart');
 						if (windowRef === undefined || windowRef === null) {
-							throw 1;
+							throw 'Failed to open window';
 						}
 					} catch (e) {
 						// window.open failed, trying location.href
@@ -156,10 +176,12 @@
 			initiateDownload = function () {
 				var svgurl,
 					blob,
+					imageType = options && options.type || 'image/png',
+					imageExtension = imageType.split('/')[1],
 					svg = chart.sanitizeSVG(chartCopyContainer.innerHTML); // SVG of chart copy
 
 				// Initiate download depending on file type
-				if (options && options.type === 'image/svg+xml') {
+				if (imageType === 'image/svg+xml') {
 					// SVG download. In this case, we want to use Microsoft specific Blob if available
 					try {
 						if (nav.msSaveOrOpenBlob) {
@@ -174,14 +196,14 @@
 						fallbackToExportServer();
 					}
 				} else {
-					// PNG download - create bitmap from SVG
+					// PNG/JPEG download - create bitmap from SVG
 					
 					// First, try to get PNG by rendering on canvas
 					svgurl = svgToDataUrl(svg);
-					imageToDataUrl(svgurl, { /* args */ }, function (imageURL) {
+					imageToDataUrl(svgurl, imageType, { /* args */ }, function (imageURL) {
 						// Success
 						try {
-							download(imageURL, 'png');
+							download(imageURL, imageExtension);
 						} catch (e) {
 							fallbackToExportServer();
 						}
@@ -195,7 +217,7 @@
 							downloadWithCanVG = function () {
 								ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
 								try {
-									download(nav.msSaveOrOpenBlob ? canvas.msToBlob() : canvas.toDataURL('image/png'), 'png');
+									download(nav.msSaveOrOpenBlob ? canvas.msToBlob() : canvas.toDataURL(imageType), imageExtension);
 								} catch (e) {
 									fallbackToExportServer();
 								}
@@ -230,7 +252,7 @@
 				}
 			},
 			// Success handler, we converted image to base64!
-			embeddedSuccess = function (imageURL, callbackArgs) {
+			embeddedSuccess = function (imageURL, imageType, callbackArgs) {
 				++imagesEmbedded;
 
 				// Change image href in chart copy
@@ -261,7 +283,7 @@
 			// Go through the images we want to embed
 			for (i = 0, l = images.length; i < l; ++i) {
 				el = images[i];
-				imageToDataUrl(el.getAttributeNS('http://www.w3.org/1999/xlink', 'href'), { imageElement: el },
+				imageToDataUrl(el.getAttributeNS('http://www.w3.org/1999/xlink', 'href'), 'image/png', { imageElement: el },
 					embeddedSuccess,
 					// Tainted canvas
 					fallbackToExportServer,
@@ -288,6 +310,13 @@
 		textKey: 'downloadPNG',
 		onclick: function () {
 			this.exportChartLocal();
+		}
+	}, {
+		textKey: 'downloadJPEG',
+		onclick: function () {
+			this.exportChartLocal({
+				type: 'image/jpeg'
+			});
 		}
 	}, {
 		textKey: 'downloadSVG',

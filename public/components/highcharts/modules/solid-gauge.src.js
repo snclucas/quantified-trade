@@ -1,8 +1,8 @@
 /**
- * @license  Highcharts JS v4.2.1 (2015-12-21)
+ * @license  Highcharts JS v4.2.5 (2016-05-06)
  * Solid angular gauge module
  *
- * (c) 2010-2014 Torstein Honsi
+ * (c) 2010-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -20,6 +20,7 @@
 		pInt = H.pInt,
 		pick = H.pick,
 		each = H.each,
+		isNumber = H.isNumber,
 		colorAxisMethods,
 		UNDEFINED;
 
@@ -191,7 +192,7 @@
 				options = series.options,
 				renderer = series.chart.renderer,
 				overshoot = options.overshoot,
-				overshootVal = overshoot && typeof overshoot === 'number' ? overshoot / 180 * Math.PI : 0;
+				overshootVal = isNumber(overshoot) ? overshoot / 180 * Math.PI : 0;
 
 			H.each(series.points, function (point) {
 				var graphic = point.graphic,
@@ -204,7 +205,8 @@
 					axisMinAngle = Math.min(yAxis.startAngleRad, yAxis.endAngleRad),
 					axisMaxAngle = Math.max(yAxis.startAngleRad, yAxis.endAngleRad),
 					minAngle,
-					maxAngle;
+					maxAngle,
+					attribs;
 
 				if (toColor === 'none') { // #3708
 					toColor = point.color || series.color || 'none';
@@ -245,14 +247,18 @@
 					if (d) {
 						shapeArgs.d = d; // animate alters it
 					}
-				} else {					
+				} else {
+					attribs = {
+						stroke: options.borderColor || 'none',
+						'stroke-width': options.borderWidth || 0,
+						fill: toColor,
+						'sweep-flag': 0
+					};
+					if (options.linecap !== 'square') {
+						attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
+					}
 					point.graphic = renderer.arc(shapeArgs)
-						.attr({
-							stroke: options.borderColor || 'none',
-							'stroke-width': options.borderWidth || 0,
-							fill: toColor,
-							'sweep-flag': 0
-						})
+						.attr(attribs)
 						.add(series.group);
 				}
 			});
